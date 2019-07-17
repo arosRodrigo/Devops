@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../pythonBasico/.idea/pythonBasico.iml" filepath="$PROJECT_DIR$/../pythonBasico/.idea/pythonBasico.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/scraping_NFCe.iml" filepath="$PROJECT_DIR$/.idea/scraping_NFCe.iml" />
+    </modules>
+  </component>
+</project>
