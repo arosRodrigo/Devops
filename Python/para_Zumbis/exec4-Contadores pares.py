@@ -3,4 +3,9 @@
 
 '''
 
+numero = int(input("Digite um numero"))
+i = 2
 
+while i<= numero:
+    print(i)
+    i = i + 2
