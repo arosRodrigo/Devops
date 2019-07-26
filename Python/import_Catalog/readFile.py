@@ -6,49 +6,56 @@ import math
 #--DECLARAÇÕES-----------------------------------------------
 # Metadados
 # Matriz
-matriz = pd.read_excel('Matriz.xlsx', sheet_names='Tabelas')
+matriz = pd.read_excel('3_matriz.xlsx', sheet_names='Tabelas')
 # Catalogo
-catalago = pd.read_excel('Catalogo.xlsx', sheet_names='registros')
+catalogo = pd.read_excel('2_Catalogo de Dados_Sulamerica.xlsx', sheet_names='Catalogo') #, skiprows=1(pular uma linha)
 # Relatório de auditoria------------------------
-relAudit = ['Arquivo conforme']
+relAudit = []
 
 #--AUDITORIA-------------------------------------------------
 # nomenclatura
-for i in catalago.columns:
-    colunas = (matriz['NOME LOGICO'].tolist())
-    if i not in colunas: # verifica se a coluna do arquivo consta na matriz
-        relAudit.append('Coluna ' + i + ' não conforme. Verifique a nomenclatura.')
+colunas = (matriz['NOME LOGICO'].tolist())
+for i in catalogo.columns:
+    if i.upper() not in colunas: # verifica se a coluna do arquivo consta na matriz
+        relAudit.append('. Coluna "' + i + '" não conforme. Verifique a NOMENCLATURA.')
     else: # verifica o conteúdo da coluna
-        tipo = matriz['TYPE'][colunas.index(i)]
+        tipo = matriz['TYPE'][colunas.index(i.upper())]
         # converte o tipo para um elemento comparável---------------------
         if tipo == 'str': tipo = type(tipo)
         elif tipo == 'int': tipo = type(0)
         elif tipo == 'datetime': tipo = type(date.today())
-        # obrigatoriedade---------------------------
-        obrg = matriz['Not null'][colunas.index(i)]
 
-        # tamanho definido para o campo---------------------------
-        size = matriz['SIZE'][colunas.index(i)]
-
-        conteudo = (catalago[i].tolist())# aloca em uma lista todo o conteudo da coluna
+        conteudo = (catalogo[i].tolist())# aloca em uma lista todo o conteudo da coluna
         for r in conteudo:# verifica cada registro
+            if not r:
+                print(r)
+
+            # obrigatoriedade---------------------------
+            obrg = matriz['Not null'][colunas.index(i.upper())]
             if obrg == 'Sim': # verifica obrigatoriedade
                 if type(r) == str:
                     if not r.strip():
-                        relAudit.append('Coluna ' + i + ' não conforme. Verifique o preenhchimento')
+                        relAudit.append('. Coluna "' + i + '" não conforme. Verifique o PREENCHIMENTO')
                 elif type(r) == int:
                     if not r:
-                        relAudit.append('Coluna ' + i + ' não conforme. Verifique o preenhchimento')
+                        relAudit.append('. Coluna "' + i + '" não conforme. Verifique o PREENCHIMENTO')
                 elif type(r) != float:
                     if math.isnan(r)==True:
-                        relAudit.append('Coluna ' + i + ' não conforme. Verifique o preenhchimento')
+                        relAudit.append('. Coluna "' + i + '" não conforme. Verifique o PREENCHIMENTO')
 
             if type(r) != tipo:# verifica o tipo do valor
-                    relAudit.append('Coluna ' + i + ' não conforme. Verifique o tipo do registro ' + str(r))
+                    relAudit.append('. Coluna "' + i + '" não conforme. Verifique o TIPO do registro ' + str(r))
             elif type(r) == str:
+                # tamanho definido para o campo---------------------------
+                size = matriz['SIZE'][colunas.index(i.upper())]
                 if len(r) > size:  # verificar o tamanho do arquivo em caso de string
-                    relAudit.append('Coluna ' + i + ' não conforme. Verifique o tamanho do registro ' + str(r))
+                    relAudit.append('Coluna "' + i + '" não conforme. Verifique o TAMANHO do registro ' + str(r))
 #-- FIM AUDITORIA---------------------------------------------------------------------------------
-for i in relAudit:
-    print(i)
+if relAudit:
+    print('Foram encontradas não conformidades no arquivo. Favor avaliar.')
+    for i in relAudit:
+        print(i)
+#--INICIO CARGA-----------------------------------------------------------------------------------
+else:
+    print('Segue para carga')
 
