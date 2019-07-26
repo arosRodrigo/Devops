@@ -13,48 +13,35 @@ catalogo = pd.read_excel('2_Catalogo de Dados_Sulamerica.xlsx', sheet_names='Cat
 relAudit = []
 
 #--AUDITORIA-------------------------------------------------
-# nomenclatura
+# COLUNAS
 colunas = (matriz['NOME LOGICO'].tolist())
 for i in catalogo.columns:
     if i.upper() not in colunas: # verifica se a coluna do arquivo consta na matriz
         relAudit.append('. Coluna "' + i + '" não conforme. Verifique a NOMENCLATURA.')
-    else: # verifica o conteúdo da coluna
-        tipo = matriz['TYPE'][colunas.index(i.upper())]
-        # converte o tipo para um elemento comparável---------------------
-        if tipo == 'str': tipo = type(tipo)
-        elif tipo == 'int': tipo = type(0)
-        elif tipo == 'datetime': tipo = type(date.today())
+    else: # CONTEUDO
+        conteudo = (catalogo[i].tolist())  # aloca em uma lista todo o conteudo da coluna
+        for r in conteudo:
+            if type(r) == float and math.isnan(r) == True: #  is empty?
+                if matriz['Not null'][colunas.index(i.upper())] == 'Sim': # Not null 'Sim'?
+                    relAudit.append('. Coluna "' + i + '" não conforme. Verifique o PREENCHIMENTO')
+            else: # type correto?
+                tipo = matriz['TYPE'][colunas.index(i.upper())]
+                if tipo == 'str': tipo = type(tipo)
+                elif tipo == 'int': tipo = type(0)
+                elif tipo == 'datetime': tipo = type(date.today())
 
-        conteudo = (catalogo[i].tolist())# aloca em uma lista todo o conteudo da coluna
-        for r in conteudo:# verifica cada registro
-            if not r:
-                print(r)
-
-            # obrigatoriedade---------------------------
-            obrg = matriz['Not null'][colunas.index(i.upper())]
-            if obrg == 'Sim': # verifica obrigatoriedade
-                if type(r) == str:
-                    if not r.strip():
-                        relAudit.append('. Coluna "' + i + '" não conforme. Verifique o PREENCHIMENTO')
-                elif type(r) == int:
-                    if not r:
-                        relAudit.append('. Coluna "' + i + '" não conforme. Verifique o PREENCHIMENTO')
-                elif type(r) != float:
-                    if math.isnan(r)==True:
-                        relAudit.append('. Coluna "' + i + '" não conforme. Verifique o PREENCHIMENTO')
-
-            if type(r) != tipo:# verifica o tipo do valor
+                if type(r) != tipo: # Type
                     relAudit.append('. Coluna "' + i + '" não conforme. Verifique o TIPO do registro ' + str(r))
-            elif type(r) == str:
-                # tamanho definido para o campo---------------------------
-                size = matriz['SIZE'][colunas.index(i.upper())]
-                if len(r) > size:  # verificar o tamanho do arquivo em caso de string
-                    relAudit.append('Coluna "' + i + '" não conforme. Verifique o TAMANHO do registro ' + str(r))
+                else: # size in case type = string
+                    if type(r) == str:
+                        if len(r) > matriz['SIZE'][colunas.index(i.upper())]:  # verificar o tamanho do arquivo em caso de string
+                            relAudit.append('. Coluna "' + i + '" não conforme. Verifique o TAMANHO do registro ' + str(r))
 #-- FIM AUDITORIA---------------------------------------------------------------------------------
 if relAudit:
-    print('Foram encontradas não conformidades no arquivo. Favor avaliar.')
+    print('Foram encontradas não conformidades no arquivo. Favor avaliar. Verifiar o Log em log/')
+    file = open('log/relatorio_'+str(date.today())+'.txt', 'w')
     for i in relAudit:
-        print(i)
+        file.write(i + '\n')
 #--INICIO CARGA-----------------------------------------------------------------------------------
 else:
     print('Segue para carga')
