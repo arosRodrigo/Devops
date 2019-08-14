@@ -1,0 +1,22 @@
+CMD
+
+Instalar ambiente virtual
+-pip install virtualenv
+
+Criar ambiente virtual
+-virtualenv [nome_ambiente_virtual]
+
+Ativar ambiente virtual
+-../[nome_ambiente_virtual]/scripts/activate.bat
+obs.: o prompt deve alterar para (nome_ambiente_virtual) c:\.........
+
+Instalar django
+-pip install django
+
+Criar projeto
+-django-admin.py startproject [nome_do_projeto]
+
+Iniciar o serviço Django
+-python manage.py runserver
+obs.: esta mensagem deve aparecer, Starting development server at http://127.0.0.1:8000/
+
