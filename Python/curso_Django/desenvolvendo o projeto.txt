@@ -1,0 +1,11 @@
+Criar o app
+-python manage.py startapp [nome_do_app]
+Setar o app no settings
+-INSTALLED_APPS=[nome_do _app]
+obs.: excluir o arquivo migrations e a pasta migrate
+Criar o modelo de base
+-editar o arquivo models.py
+Criar a estrutura no SQlite
+-python manage.py makemigrations e depois migrate
+
+
